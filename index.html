@@ -108,98 +108,105 @@
     <div class="shape"></div>
     <h2>OLJ only supports an "exact match" keyword. Use 1 word for better search result.</h2>
     <h3>Example: "VA" or "virtual" for Virtual Assistant jobs</h3>
-    <input type="text" id="keyword" class="center-placeholder" placeholder="Enter 1 keyword only...">
+    <input type="text" id="kw1" class="center-placeholder" placeholder="Enter keyword1">
+    <input type="text" id="kw2" class="center-placeholder" placeholder="Enter keyword2">
+    <input type="text" id="kw3" class="center-placeholder" placeholder="Enter keyword3">
+    <input type="text" id="kw4" class="center-placeholder" placeholder="Enter keyword4">
+    <input type="text" id="kw5" class="center-placeholder" placeholder="Enter keyword5">
     <button id="submit">Submit</button>
+    
 
     <script>
-    window.Telegram.WebApp.expand(); // Expand WebApp to full screen
-
-    const tg = window.Telegram.WebApp;
-    let userData = tg.initDataUnsafe.user;
-    const submitButton = document.getElementById("submit");
-    const originalButtonText = submitButton.innerHTML;
+        window.Telegram.WebApp.expand(); // Expand WebApp to full screen
         
-    document.getElementById("submit").addEventListener("click", async () => {
-        // Disable button and show loading state
-        submitButton.disabled = true;
-        submitButton.innerHTML = '<span class="spinner"></span> Loading...'; // You can also use a spinner icon here
+        const tg = window.Telegram.WebApp;
+        let userData = tg.initDataUnsafe.user;
+        const submitButton = document.getElementById("submit");
+        const originalButtonText = submitButton.innerHTML;
         
-    const keyword = document.getElementById("keyword").value.trim();
-    const specialCharRegex = /[^a-zA-Z0-9\s]/; // Allows letters, numbers, and spaces    
+        const inputFields = [
+            document.getElementById("kw1"),
+            document.getElementById("kw2"),
+            document.getElementById("kw3"),
+            document.getElementById("kw4"),
+            document.getElementById("kw5")
+        ];
         
-if (!keyword) {
-    tg.showPopup({
-        title: 'Error',
-        message: 'Please enter a keyword.',
-        buttons: [{ type: 'ok' }]
-    });
-    submitButton.disabled = false;
-    submitButton.innerHTML = originalButtonText;
-    return;
-}
-
-if (specialCharRegex.test(keyword)) {
-    tg.showPopup({
-        title: 'Error',
-        message: 'Special characters are not allowed.',
-        buttons: [{ type: 'ok' }]
-    });
-    submitButton.disabled = false;
-    submitButton.innerHTML = originalButtonText;
-    return;
-}
+        async function loadKeywords(chat_id) {
+            try {
+                const res = await fetch(`https://n8n.kmonlinesolutions.com/webhook-test/get-keyword?uid=${chat_id}`);
+                const data = await res.json();
         
-        const chat_id = userData?.id;
-        if (!chat_id) {
-            tg.showPopup({
-                title: 'Error',
-                message: 'Could not get chat ID.',
-                buttons: [{type: 'ok'}]
-            });
-            // Reset button state
-            submitButton.disabled = false;
-            submitButton.innerHTML = originalButtonText;
-            return;
+                if (data.keywords && Array.isArray(data.keywords)) {
+                    for (let i = 0; i < 5; i++) {
+                        if (data.keywords[i]) {
+                            inputFields[i].value = data.keywords[i];
+                        } else {
+                            inputFields[i].placeholder = `Enter keyword${i + 1}`;
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error("Error fetching keywords:", err);
+            }
         }
-
-        const webhookUrl = "https://n8n.kmonlinesolutions.com/webhook/3f74359a-a00a-4b04-b6b4-6952d3180b0d";
-
-        try {
-            const response = await fetch(webhookUrl, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ chat_id, keyword }),
-            });
-
-            if (response.ok) {
-                // Reset button state before alert
+        
+        document.getElementById("submit").addEventListener("click", async () => {
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<span class="spinner"></span> Loading...';
+        
+            const chat_id = userData?.id;
+            if (!chat_id) {
+                tg.showPopup({ title: 'Error', message: 'Could not get chat ID.', buttons: [{type: 'ok'}] });
                 submitButton.disabled = false;
                 submitButton.innerHTML = originalButtonText;
-                
-               tg.showPopup({
-                    title: 'Success',
-                    message: 'Keyword updated',
-                    buttons: [{type: 'ok'}]
-                });
-                
-                // Close the WebApp after a short delay
-                    tg.close();
-            } else {
-                throw new Error('Request failed');
+                return;
             }
-        } catch (error) {
-            console.error("Error:", error);
-            tg.showPopup({
-                title: 'Error',
-                message: 'Failed to send data. Click Ok and press Submit button again.',
-                buttons: [{type: 'Ok'}]
+        
+            const specialCharRegex = /[^a-zA-Z0-9\s]/;
+        
+            const keywords = inputFields.map((field, i) => {
+                const val = field.value.trim();
+                if (specialCharRegex.test(val)) {
+                    tg.showPopup({
+                        title: 'Error',
+                        message: `Keyword ${i + 1} has special characters.`,
+                        buttons: [{ type: 'ok' }]
+                    });
+                    throw new Error("Validation failed");
+                }
+                return val;
             });
-            // Reset button state
+        
+            const webhookUrl = "https://n8n.kmonlinesolutions.com/webhook/3f74359a-a00a-4b04-b6b4-6952d3180b0d";
+        
+            try {
+                const response = await fetch(webhookUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ chat_id, keyword1: keywords[0], keyword2: keywords[1], keyword3: keywords[2], keyword4: keywords[3], keyword5: keywords[4] }),
+                });
+        
+                if (response.ok) {
+                    tg.showPopup({ title: 'Success', message: 'Keywords updated.', buttons: [{ type: 'ok' }] });
+                    tg.close();
+                } else throw new Error("POST failed");
+            } catch (error) {
+                console.error("Error:", error);
+                tg.showPopup({
+                    title: 'Error',
+                    message: 'Failed to update. Try again.',
+                    buttons: [{ type: 'ok' }]
+                });
+            }
+        
             submitButton.disabled = false;
             submitButton.innerHTML = originalButtonText;
-        }
-    });
-</script>
+        });
+        
+        if (userData?.id) loadKeywords(userData.id);
+        </script>
+        
 
 </body>
 </html>
