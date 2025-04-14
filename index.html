@@ -134,7 +134,7 @@
         
         async function loadKeywords(chat_id) {
             try {
-                const res = await fetch(`https://n8n.kmonlinesolutions.com/webhook-test/get-keyword?uid=${chat_id}`);
+                const res = await fetch(`https://n8n.kmonlinesolutions.com/webhook-test/get-keyword?chat_id=${chat_id}`);
                 const data = await res.json();
         
                 if (data.keywords && Array.isArray(data.keywords)) {
@@ -178,7 +178,7 @@
                 return val;
             });
         
-            const webhookUrl = "https://n8n.kmonlinesolutions.com/webhook/3f74359a-a00a-4b04-b6b4-6952d3180b0d";
+            const webhookUrl = "https://n8n.kmonlinesolutions.com/webhook-test/update-keyword";
         
             try {
                 const response = await fetch(webhookUrl, {
