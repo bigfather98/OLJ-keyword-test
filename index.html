@@ -70,6 +70,20 @@
         width: 100%; /* Take full width within body padding */
         max-width: 600px; /* Optional max-width if needed */
     }
+h4 {
+    font-size: 0.8rem; /* Slightly smaller for mobile */
+    padding: 0;
+    margin: 0 0 1.5rem 0; /* Adjusted spacing */
+    text-align: center;
+    color: var(--dark-gray);
+    width: 100%; /* Take full width within body padding */
+    max-width: 600px; /* Optional max-width if needed */
+}
+
+h4 a {
+    color: blue; /* Blue link color */
+    text-decoration: underline; /* Underline the link */
+}
 
     .input-group {
         display: flex;
@@ -158,11 +172,11 @@
     <!-- Added class to button for specific styling -->
     <button id="submit" class="submit-button">Submit</button>
     <h3></br>I will release the Upwork notification bot next month</h3>
-    <h3>
-  <a href="https://t.me/upworkbotgroup" target="_blank" style="text-decoration: none; color: inherit;">
-    Join the Telegram group to get news, updates, ask questions, and request a feature.
-  </a>
-</h3>
+ <h4>&#128073 
+  <a href="https://t.me/upworkbotgroup" target="_blank">
+    Join the Telegram group to get news, updates, ask questions, or request a feature
+  </a> &#128072
+</h4>
 
     <script>
         window.Telegram.WebApp.expand(); // Expand WebApp to full screen
