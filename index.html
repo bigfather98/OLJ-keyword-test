@@ -88,7 +88,13 @@
         width: 100%; /* Take full width of parent (.input-group) */
         border: 1px solid var(--medium-gray);
         border-radius: var(--input-border-radius);
+        text-align: center; /* Center the text value */
         /* Removed individual margins */
+    }
+
+    /* Hide placeholder on focus */
+    .keyword-input:focus::placeholder {
+        color: transparent;
     }
 
     .submit-button { /* Replaced generic 'button' selector */
@@ -133,11 +139,6 @@
         to { transform: rotate(360deg); }
     }
 
-    .center-placeholder::placeholder {
-        text-align: center;
-        /* display: block; /* Not always needed, test */
-    }
-
 </style>
 <body>
     <div class="shape"></div>
@@ -146,11 +147,11 @@
 
     <!-- Input fields wrapped in a div for better structure and spacing -->
     <div class="input-group">
-        <input type="text" id="kw1" class="keyword-input center-placeholder" placeholder="Enter keyword1">
-        <input type="text" id="kw2" class="keyword-input center-placeholder" placeholder="Enter keyword2">
-        <input type="text" id="kw3" class="keyword-input center-placeholder" placeholder="Enter keyword3">
-        <input type="text" id="kw4" class="keyword-input center-placeholder" placeholder="Enter keyword4">
-        <input type="text" id="kw5" class="keyword-input center-placeholder" placeholder="Enter keyword5">
+        <input type="text" id="kw1" class="keyword-input" placeholder="Enter keyword1">
+        <input type="text" id="kw2" class="keyword-input" placeholder="Enter keyword2">
+        <input type="text" id="kw3" class="keyword-input" placeholder="Enter keyword3">
+        <input type="text" id="kw4" class="keyword-input" placeholder="Enter keyword4">
+        <input type="text" id="kw5" class="keyword-input" placeholder="Enter keyword5">
     </div>
 
     <!-- Added class to button for specific styling -->
