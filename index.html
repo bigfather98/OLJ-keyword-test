@@ -209,6 +209,21 @@ h4 a {
                             // inputFields[i].placeholder = `Enter keyword${i + 1}`;
                         }
                     }
+
+                    // --- NEW LOGIC START ---
+                    const subscriptionStatus = data.subscription_status;
+                    const fieldsToDisable = [inputFields[1], inputFields[2], inputFields[3], inputFields[4]]; // kw2, kw3, kw4, kw5
+
+                    if (subscriptionStatus === "active") {
+                        // Enable all fields if subscription is active
+                        inputFields.forEach(field => field.disabled = false);
+                    } else {
+                        // Disable fields kw2 to kw5 if subscription is not active
+                        fieldsToDisable.forEach(field => field.disabled = true);
+                        // Ensure kw1 is always enabled
+                        inputFields[0].disabled = false; // Ensure kw1 is enabled
+                    }
+                    // --- NEW LOGIC END ---
                 }
             } catch (err) {
                 console.error("Error fetching keywords:", err);
