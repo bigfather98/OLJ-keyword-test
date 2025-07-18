@@ -194,6 +194,8 @@ h4 a {
             document.getElementById("kw5")
         ];
 
+        let currentSubscriptionStatus; // Variable to store subscription status
+
         async function loadKeywords(chat_id) {
             try {
                 const res = await fetch(`https://n8n.kmonlinesolutions.com/webhook/get-keyword?chat_id=${chat_id}`);
@@ -220,12 +222,26 @@ h4 a {
                             input.disabled = false;
                             input.value = keywordValue; // Use loaded keyword value
                         } else {
-                            input.disabled = true;
-                            input.value = "subscribe"; // Mask the value
+                            // Keep existing placeholder if no keyword loaded
+                            // inputFields[i].placeholder = `Enter keyword${i + 1}`;
                         }
                     }
-                });
 
+                    // --- NEW LOGIC START ---
+                    const subscriptionStatus = data.subscription_status;
+                    const fieldsToDisable = [inputFields[1], inputFields[2], inputFields[3], inputFields[4]]; // kw2, kw3, kw4, kw5
+
+                    if (subscriptionStatus === "active") {
+                        // Enable all fields if subscription is active
+                        inputFields.forEach(field => field.disabled = false);
+                    } else {
+                        // Disable fields kw2 to kw5 if subscription is not active
+                        fieldsToDisable.forEach(field => field.disabled = true);
+                        // Ensure kw1 is always enabled
+                        inputFields[0].disabled = false; // Ensure kw1 is enabled
+                    }
+                    // --- NEW LOGIC END ---
+                }
             } catch (err) {
                 console.error("Error fetching keywords:", err);
                 // Optionally inform user:
@@ -275,10 +291,23 @@ h4 a {
             const webhookUrl = "https://n8n.kmonlinesolutions.com/webhook/update-keyword";
 
             try {
+                let payload = {
+                    chat_id: chat_id,
+                    keyword1: keywords[0] // Always send keyword1
+                };
+
+                // Check subscription status to include other keywords
+                if (currentSubscriptionStatus === "active") {
+                    payload.keyword2 = keywords[1];
+                    payload.keyword3 = keywords[2];
+                    payload.keyword4 = keywords[3];
+                    payload.keyword5 = keywords[4];
+                }
+
                 const response = await fetch(webhookUrl, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ chat_id, keyword1: keywords[0], keyword2: keywords[1], keyword3: keywords[2], keyword4: keywords[3], keyword5: keywords[4] }),
+                    body: JSON.stringify(payload), // Use the conditionally built payload
                 });
 
                 if (response.ok) {
