@@ -171,6 +171,8 @@ h4 a {
 
     <!-- Added class to button for specific styling -->
     <button id="submit" class="submit-button">Submit</button>
+    <h3></br><a href="https://n8n.kmonlinesolutions.com/webhook/subscribe" target="_blank" onclick="handleSubscriptionClick()">Subscribe to unlock multiple keyword search</h3>
+ <h4>&#128073 
     <h3></br><a href="https://t.me/KMupworkbot" target="_blank"> Upwork bot is released @BMupworkbot</h3>
  <h4>&#128073 
   <a href="https://t.me/upworkbotgroup" target="_blank">
@@ -330,6 +332,64 @@ h4 a {
             console.warn("User data not immediately available for loading keywords.");
             // Optionally, show a message or retry later
         }
+
+        function handleSubscriptionClick() {
+            const chat_id = window.Telegram.WebApp.initDataUnsafe.user?.id;
+            const webhookUrl = "https://n8n.kmonlinesolutions.com/webhook/subscribe";
+
+            if (!chat_id) {
+                console.error("Chat ID not found.");
+                // Optionally use tg.showPopup if tg is available and initialized
+                if (window.Telegram && window.Telegram.WebApp) {
+                    window.Telegram.WebApp.showPopup({
+                        title: 'Error',
+                        message: 'Could not retrieve user ID. Please restart the app.',
+                        buttons: [{ type: 'ok' }]
+                    });
+                }
+                return;
+            }
+
+            fetch(webhookUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ chat_id: chat_id }),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    // Attempt to get more error details from the response body
+                    return response.text().then(text => {
+                        throw new Error(`HTTP error! status: ${response.status}, message: ${text}`);
+                    });
+                }
+                return response.json(); // Assuming the webhook returns JSON
+            })
+            .then(data => {
+                console.log("Subscription successful:", data);
+                // Optionally show a success popup or redirect
+                if (window.Telegram && window.Telegram.WebApp) {
+                    window.Telegram.WebApp.showPopup({
+                        title: 'Success',
+                        message: 'Subscription request sent successfully!',
+                        buttons: [{ type: 'ok' }]
+                    });
+                }
+            })
+            .catch(error => {
+                console.error("Subscription failed:", error);
+                // Show error popup using tg.showPopup if tg is available
+                if (window.Telegram && window.Telegram.WebApp) {
+                    window.Telegram.WebApp.showPopup({
+                        title: 'Subscription Error',
+                        message: `Failed to send subscription request: ${error.message}`,
+                        buttons: [{ type: 'ok' }]
+                    });
+                }
+            });
+        }
+
     </script>
 
 </body>
