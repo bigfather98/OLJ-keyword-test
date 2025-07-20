@@ -171,8 +171,8 @@ h4 a {
 
     <!-- Added class to button for specific styling -->
     <button id="submit" class="submit-button">Submit</button>
-    <h3></br><a id="subscribeLink" target="_blank">Subscribe to unlock multiple keyword search</h3>
- <h4>
+    <h3>Unlock multiple keyword search</h3>
+    <button id="subscribeButton">Subscribe to unlock multiple keyword search</button>
     <h3></br><a href="https://t.me/KMupworkbot" target="_blank"> Upwork bot is released @BMupworkbot</h3>
  <h4>&#128073 
   <a href="https://t.me/upworkbotgroup" target="_blank">
@@ -333,46 +333,63 @@ h4 a {
             // Optionally, show a message or retry later
         }
 
-        async function handleSubscriptionClick() {
-            const tg = window.Telegram.WebApp;
-            const userData = tg?.initDataUnsafe?.user;
-            const chat_id = userData?.id;
-            const webhookUrl = `https://n8n.kmonlinesolutions.com/webhook/subscribe?chat_id=${chat_id}`;
-
-            // Check if Telegram Web App is available
-            if (!tg) {
-                console.error("Telegram Web App not available.");
-                // Display error to user if tg is not available
-                // This case is unlikely if the script is running within Telegram Web App
-                // but good for robustness. However, tg.showPopup would also fail.
-                // For now, we'll just log and return.
-                return;
-            }
-
-            // Check if userData is available
-            if (!userData) {
-                console.error("User data not available.");
-                tg.showPopup({
-                    title: 'Error',
-                    message: 'Could not retrieve user information. Please ensure you are using the app within Telegram.',
-                    buttons: [{ type: 'ok' }]
-                });
-                return;
-            }
-
-            // Check if chat_id (userData.id) is available
-            if (!chat_id) {
-                console.error("Chat ID not found.");
-                tg.showPopup({
-                    title: 'Error',
-                    message: 'Could not retrieve your user ID. Please restart the app or try again later.',
-                    buttons: [{ type: 'ok' }]
-                });
-                return;
-            }
-
-            // If all checks pass, proceed with the fetch request
+async function handleSubscriptionClick() {
+            const button = document.getElementById("subscribeButton");
+            
+            // Disable button during request
+            button.disabled = true;
+            button.textContent = "Processing...";
+            
             try {
+                const tg = window.Telegram.WebApp;
+                const userData = tg?.initDataUnsafe?.user;
+                const chat_id = userData?.id;
+                
+                // Debug logging
+                console.log("Debug - userData:", userData);
+                console.log("Debug - chat_id:", chat_id);
+                
+                const webhookUrl = `https://n8n.kmonlinesolutions.com/webhook/subscribe?chat_id=${chat_id}`;
+                console.log("Debug - webhookUrl:", webhookUrl);
+
+                // Check if Telegram Web App is available
+                if (!tg) {
+                    console.error("Telegram Web App not available.");
+                    alert("Telegram Web App not available. Please open this in Telegram.");
+                    return;
+                }
+
+                // Check if userData is available
+                if (!userData) {
+                    console.error("User data not available.");
+                    if (tg.showPopup) {
+                        tg.showPopup({
+                            title: 'Error',
+                            message: 'Could not retrieve user information. Please ensure you are using the app within Telegram.',
+                            buttons: [{ type: 'ok' }]
+                        });
+                    } else {
+                        alert('Could not retrieve user information. Please ensure you are using the app within Telegram.');
+                    }
+                    return;
+                }
+
+                // Check if chat_id (userData.id) is available
+                if (!chat_id) {
+                    console.error("Chat ID not found.");
+                    if (tg.showPopup) {
+                        tg.showPopup({
+                            title: 'Error',
+                            message: 'Could not retrieve your user ID. Please restart the app or try again later.',
+                            buttons: [{ type: 'ok' }]
+                        });
+                    } else {
+                        alert('Could not retrieve your user ID. Please restart the app or try again later.');
+                    }
+                    return;
+                }
+
+                // Make the request
                 const response = await fetch(webhookUrl, {
                     method: "POST",
                     headers: {
@@ -381,37 +398,73 @@ h4 a {
                     body: JSON.stringify({ chat_id: chat_id }),
                 });
 
+                console.log("Response status:", response.status);
+                console.log("Response headers:", response.headers);
+
                 if (!response.ok) {
                     const errorText = await response.text();
                     console.error("Subscription failed:", response.status, errorText);
-                    tg.showPopup({
-                        title: 'Error',
-                        message: `Failed to send subscription request: ${response.status} - ${errorText || 'Unknown error'}`,
-                        buttons: [{ type: 'ok' }]
-                    });
-                    return; // Stop execution if response is not ok
+                    
+                    if (tg.showPopup) {
+                        tg.showPopup({
+                            title: 'Error',
+                            message: `Failed to send subscription request: ${response.status} - ${errorText || 'Unknown error'}`,
+                            buttons: [{ type: 'ok' }]
+                        });
+                    } else {
+                        alert(`Failed to send subscription request: ${response.status} - ${errorText || 'Unknown error'}`);
+                    }
+                    return;
                 }
 
                 const data = await response.json();
                 console.log("Subscription successful:", data);
-                tg.showPopup({
-                    title: 'Success',
-                    message: 'Subscription request sent!',
-                    buttons: [{ type: 'ok' }]
-                });
+                
+                if (tg.showPopup) {
+                    tg.showPopup({
+                        title: 'Success',
+                        message: 'Subscription request sent successfully!',
+                        buttons: [{ type: 'ok' }]
+                    });
+                } else {
+                    alert('Subscription request sent successfully!');
+                }
 
             } catch (error) {
                 console.error("Subscription failed:", error);
-                tg.showPopup({
-                    title: 'Connection Error',
-                    message: `Failed to send subscription request: ${error.message}`,
-                    buttons: [{ type: 'ok' }]
-                });
+                
+                const tg = window.Telegram.WebApp;
+                if (tg && tg.showPopup) {
+                    tg.showPopup({
+                        title: 'Connection Error',
+                        message: `Failed to send subscription request: ${error.message}`,
+                        buttons: [{ type: 'ok' }]
+                    });
+                } else {
+                    alert(`Failed to send subscription request: ${error.message}`);
+                }
+            } finally {
+                // Re-enable button
+                button.disabled = false;
+                button.textContent = "Subscribe to unlock multiple keyword search";
             }
         }
-        const subscribeLink = document.getElementById("subscribeLink");
-        if (subscribeLink) {
-            subscribeLink.addEventListener("click", handleSubscriptionClick);
+
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const subscribeButton = document.getElementById("subscribeButton");
+            if (subscribeButton) {
+                subscribeButton.addEventListener("click", handleSubscriptionClick);
+                console.log("Event listener attached to subscribe button");
+            } else {
+                console.error("Subscribe button not found!");
+            }
+        });
+
+        // Initialize Telegram Web App
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.ready();
+            console.log("Telegram Web App initialized");
         }
 
     </script>
