@@ -339,21 +339,39 @@ h4 a {
             const chat_id = userData?.id;
             const webhookUrl = "https://n8n.kmonlinesolutions.com/webhook/subscribe";
 
+            // Check if Telegram Web App is available
             if (!tg) {
                 console.error("Telegram Web App not available.");
+                // Display error to user if tg is not available
+                // This case is unlikely if the script is running within Telegram Web App
+                // but good for robustness. However, tg.showPopup would also fail.
+                // For now, we'll just log and return.
                 return;
             }
 
-            if (!chat_id) {
-                console.error("Chat ID not found.");
+            // Check if userData is available
+            if (!userData) {
+                console.error("User data not available.");
                 tg.showPopup({
                     title: 'Error',
-                    message: 'Could not retrieve user ID. Please restart the app.',
+                    message: 'Could not retrieve user information. Please ensure you are using the app within Telegram.',
                     buttons: [{ type: 'ok' }]
                 });
                 return;
             }
 
+            // Check if chat_id (userData.id) is available
+            if (!chat_id) {
+                console.error("Chat ID not found.");
+                tg.showPopup({
+                    title: 'Error',
+                    message: 'Could not retrieve your user ID. Please restart the app or try again later.',
+                    buttons: [{ type: 'ok' }]
+                });
+                return;
+            }
+
+            // If all checks pass, proceed with the fetch request
             try {
                 const response = await fetch(webhookUrl, {
                     method: "POST",
