@@ -219,6 +219,10 @@ h4 a {
                     if (subscriptionStatus !== "active") {
                         // When subscription is NOT active:
                         // Populate kw1 (inputFields[0]) with data.keywords[0] (already handled by the loop above)
+                        // Explicitly set kw1 (inputFields[0]) with data.keywords[0]
+                        if (data.keywords[0]) { // Ensure data.keywords[0] exists
+                            inputFields[0].value = data.keywords[0];
+                        }
                         // Ensure kw2-kw5 are disabled and have placeholder "Subscribe to Unlock"
                         kw2to5.forEach(field => {
                             field.disabled = true;
