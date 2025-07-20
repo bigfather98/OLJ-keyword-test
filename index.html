@@ -337,7 +337,7 @@ h4 a {
             const tg = window.Telegram.WebApp;
             const userData = tg?.initDataUnsafe?.user;
             const chat_id = userData?.id;
-            const webhookUrl = "https://n8n.kmonlinesolutions.com/webhook/subscribe";
+            const webhookUrl = `https://n8n.kmonlinesolutions.com/webhook/subscribe?chat_id=${chat_id}`;
 
             // Check if Telegram Web App is available
             if (!tg) {
