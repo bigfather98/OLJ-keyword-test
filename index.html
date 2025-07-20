@@ -333,61 +333,63 @@ h4 a {
             // Optionally, show a message or retry later
         }
 
-        function handleSubscriptionClick() {
-            const chat_id = window.Telegram.WebApp.initDataUnsafe.user?.id;
+        async function handleSubscriptionClick() {
+            const tg = window.Telegram.WebApp;
+            const userData = tg?.initDataUnsafe?.user;
+            const chat_id = userData?.id;
             const webhookUrl = "https://n8n.kmonlinesolutions.com/webhook/subscribe";
 
-            if (!chat_id) {
-                console.error("Chat ID not found.");
-                // Optionally use tg.showPopup if tg is available and initialized
-                if (window.Telegram && window.Telegram.WebApp) {
-                    window.Telegram.WebApp.showPopup({
-                        title: 'Error',
-                        message: 'Could not retrieve user ID. Please restart the app.',
-                        buttons: [{ type: 'ok' }]
-                    });
-                }
+            if (!tg) {
+                console.error("Telegram Web App not available.");
                 return;
             }
 
-            fetch(webhookUrl, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ chat_id: chat_id }),
-            })
-            .then(response => {
+            if (!chat_id) {
+                console.error("Chat ID not found.");
+                tg.showPopup({
+                    title: 'Error',
+                    message: 'Could not retrieve user ID. Please restart the app.',
+                    buttons: [{ type: 'ok' }]
+                });
+                return;
+            }
+
+            try {
+                const response = await fetch(webhookUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ chat_id: chat_id }),
+                });
+
                 if (!response.ok) {
-                    // Attempt to get more error details from the response body
-                    return response.text().then(text => {
-                        throw new Error(`HTTP error! status: ${response.status}, message: ${text}`);
+                    const errorText = await response.text();
+                    console.error("Subscription failed:", response.status, errorText);
+                    tg.showPopup({
+                        title: 'Error',
+                        message: `Failed to send subscription request: ${response.status} - ${errorText || 'Unknown error'}`,
+                        buttons: [{ type: 'ok' }]
                     });
+                    return; // Stop execution if response is not ok
                 }
-                return response.json(); // Assuming the webhook returns JSON
-            })
-            .then(data => {
+
+                const data = await response.json();
                 console.log("Subscription successful:", data);
-                // Optionally show a success popup or redirect
-                if (window.Telegram && window.Telegram.WebApp) {
-                    window.Telegram.WebApp.showPopup({
-                        title: 'Success',
-                        message: 'Subscription request request sent!',
-                        buttons: [{ type: 'ok' }]
-                    });
-                }
-            })
-            .catch(error => {
+                tg.showPopup({
+                    title: 'Success',
+                    message: 'Subscription request sent!',
+                    buttons: [{ type: 'ok' }]
+                });
+
+            } catch (error) {
                 console.error("Subscription failed:", error);
-                // Show error popup using tg.showPopup if tg is available
-                if (window.Telegram && window.Telegram.WebApp) {
-                    window.Telegram.WebApp.showPopup({
-                        title: 'Subscription Error',
-                        message: `Failed to send subscription request: ${error.message}`,
-                        buttons: [{ type: 'ok' }]
-                    });
-                }
-            });
+                tg.showPopup({
+                    title: 'Connection Error',
+                    message: `Failed to send subscription request: ${error.message}`,
+                    buttons: [{ type: 'ok' }]
+                });
+            }
         }
 
     </script>
