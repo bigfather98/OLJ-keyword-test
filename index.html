@@ -220,6 +220,11 @@ h4 a {
 
                     // --- MODIFIED LOGIC START ---
                     const subscriptionStatus = data.subscription_status;
+                    const subscribeButton = document.getElementById("subscribeButton");
+                    if (subscribeButton && subscriptionStatus === "active") {
+                        subscribeButton.style.display = "none";
+                    }
+
                     const kw2to5 = [inputFields[1], inputFields[2], inputFields[3], inputFields[4]]; // kw2, kw3, kw4, kw5
 
                     if (subscriptionStatus !== "active") {
