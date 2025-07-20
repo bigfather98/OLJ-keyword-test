@@ -227,6 +227,7 @@ h4 a {
                         kw2to5.forEach(field => {
                             field.disabled = true;
                             field.placeholder = "🔒"; // Set placeholder to lock emoji
+                            field.value = ""; // Clear the value
                         });
                         // Ensure kw1 is enabled
                         inputFields[0].disabled = false;
