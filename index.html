@@ -210,23 +210,26 @@ h4 a {
                         }
                     }
 
-                    // --- NEW LOGIC START ---
+                    // --- MODIFIED LOGIC START ---
                     const subscriptionStatus = data.subscription_status;
-                    const fieldsToDisable = [inputFields[1], inputFields[2], inputFields[3], inputFields[4]]; // kw2, kw3, kw4, kw5
+                    const kw2to5 = [inputFields[1], inputFields[2], inputFields[3], inputFields[4]]; // kw2, kw3, kw4, kw5
 
                     if (subscriptionStatus === "active") {
-                        // Enable all fields if subscription is active
-                        inputFields.forEach(field => field.disabled = false);
-                    } else {
-                        // Disable fields kw2 to kw5 if subscription is not active
-                        fieldsToDisable.forEach(field => {
+                        // When subscription is active:
+                        // Populate kw1 (inputFields[0]) with data.keywords[0] (already handled by the loop above)
+                        // Ensure kw2-kw5 are disabled and have placeholder "Subscribe to Unlock"
+                        kw2to5.forEach(field => {
                             field.disabled = true;
                             field.placeholder = "Subscribe to Unlock";
                         });
-                        // Ensure kw1 is always enabled
-                        inputFields[0].disabled = false; // Ensure kw1 is enabled
+                        // Ensure kw1 is enabled
+                        inputFields[0].disabled = false;
+                    } else {
+                        // When subscription is NOT active:
+                        // Ensure all input fields (kw1-kw5) are enabled
+                        inputFields.forEach(field => field.disabled = false);
                     }
-                    // --- NEW LOGIC END ---
+                    // --- MODIFIED LOGIC END ---
                 }
             } catch (err) {
                 console.error("Error fetching keywords:", err);
