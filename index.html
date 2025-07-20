@@ -435,13 +435,16 @@ async function handleSubscriptionClick() {
                     tg.showPopup({
                         title: 'Success',
                         message: 'Subscription request sent successfully!',
-                        buttons: [{ type: 'ok' }],
-                            function() {
+                        buttons: [{
+                            type: 'ok'
+                        }]
+                    }, function() {
                                 // This callback runs when the popup is closed
                                 tg.close();
                     });
                 } else {
                     alert('Subscription request sent successfully!');
+                    tg.close();
                 }
 
             } catch (error) {
