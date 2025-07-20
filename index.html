@@ -214,8 +214,8 @@ h4 a {
                     const subscriptionStatus = data.subscription_status;
                     const kw2to5 = [inputFields[1], inputFields[2], inputFields[3], inputFields[4]]; // kw2, kw3, kw4, kw5
 
-                    if (subscriptionStatus === "active") {
-                        // When subscription is active:
+                    if (subscriptionStatus !== "active") {
+                        // When subscription is NOT active:
                         // Populate kw1 (inputFields[0]) with data.keywords[0] (already handled by the loop above)
                         // Ensure kw2-kw5 are disabled and have placeholder "Subscribe to Unlock"
                         kw2to5.forEach(field => {
@@ -225,7 +225,7 @@ h4 a {
                         // Ensure kw1 is enabled
                         inputFields[0].disabled = false;
                     } else {
-                        // When subscription is NOT active:
+                        // When subscription is active:
                         // Ensure all input fields (kw1-kw5) are enabled
                         inputFields.forEach(field => field.disabled = false);
                     }
