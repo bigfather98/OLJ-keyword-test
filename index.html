@@ -664,11 +664,15 @@ async function loadKeywords(chat_id) {
             const jobTypeCheckboxes = document.querySelectorAll('input[name="jobType"]');
             const selectedJobTypes = {};
             jobTypeCheckboxes.forEach((checkbox) => {
+                // Remove whitespace from key name to match your naming convention
+                const key = checkbox.value.replace(/\s/g, '');
                 if (checkbox.checked) {
-                    const key = checkbox.value.replace(/\s/g, '');
                     selectedJobTypes[key] = "yes";
+                } else {
+                    selectedJobTypes[key] = null;  // explicitly set to null if not checked
                 }
             });
+
 
             // Construct the final payload
             const postData = {
