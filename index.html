@@ -563,59 +563,64 @@ h5 {
             document.getElementById("kw5")
         ];
 
-        async function loadKeywords(chat_id) {
-            try {
-                // Updated fetch URL based on previous file content
-                const res = await fetch(`https://n8n.kmonlinesolutions.com/webhook/get-keyword?chat_id=${chat_id}`);
-                const data = await res.json();
+async function loadKeywords(chat_id) {
+    try {
+        // Fetch keywords and related data from your API
+        const res = await fetch(`https://n8n.kmonlinesolutions.com/webhook/get-keyword?chat_id=${chat_id}`);
+        const data = await res.json();
 
-                if (data.keywords && Array.isArray(data.keywords)) {
-                    for (let i = 0; i < 5; i++) {
-                        if (data.keywords[i]) {
-                            inputFields[i].value = data.keywords[i];
-                        } else {
-                            // Keep existing placeholder if no keyword loaded
-                            // inputFields[i].placeholder = `Enter keyword${i + 1}`;
-                        }
-                    }
-
-                    // --- MODIFIED LOGIC START ---
-                    const subscriptionStatus = data.subscription_status;
-                    const subscribeButton = document.getElementById("subscribeButton");
-                    if (subscribeButton && subscriptionStatus === "active") {
-                        subscribeButton.style.display = "none";
-                    }
-
-                    const kw2to5 = [inputFields[1], inputFields[2], inputFields[3], inputFields[4]]; // kw2, kw3, kw4, kw5
-
-                    if (subscriptionStatus !== "active") {
-                        // When subscription is NOT active:
-                        // Populate kw1 (inputFields[0]) with data.keywords[0] (already handled by the loop above)
-                        // Explicitly set kw1 (inputFields[0]) with data.keywords[0]
-                        if (data.keywords[0]) { // Ensure data.keywords[0] exists
-                            inputFields[0].value = data.keywords[0];
-                        }
-                        // Ensure kw2-kw5 are disabled and have placeholder "Subscribe to Unlock"
-                        kw2to5.forEach(field => {
-                            field.disabled = true;
-                            field.placeholder = "🔒"; // Set placeholder to lock emoji
-                            field.value = ""; // Clear the value
-                        });
-                        // Ensure kw1 is enabled
-                        inputFields[0].disabled = false;
-                    } else {
-                        // When subscription is active:
-                        // Ensure all input fields (kw1-kw5) are enabled
-                        inputFields.forEach(field => field.disabled = false);
-                    }
-                    // --- MODIFIED LOGIC END ---
+        // Check keywords exist and are array
+        if (data.keywords && Array.isArray(data.keywords)) {
+            // Populate keyword input fields (assume inputFields is an array of the 5 keyword input elements)
+            for (let i = 0; i < 5; i++) {
+                if (data.keywords[i]) {
+                    inputFields[i].value = data.keywords[i];
+                } else {
+                    // Optional: keep existing placeholder or clear
+                    // inputFields[i].placeholder = `Enter keyword${i + 1}`;
                 }
-            } catch (err) {
-                console.error("Error fetching keywords:", err);
-                // Optionally inform user:
-                // tg.showPopup({ title: 'Info', message: 'Could not load existing keywords.', buttons: [{type: 'ok'}] });
             }
+
+            // Handle subscription status & enabling/disabling fields
+            const subscriptionStatus = data.subscription_status;
+            const subscribeButton = document.getElementById("subscribeButton");
+            if (subscribeButton && subscriptionStatus === "active") {
+                subscribeButton.style.display = "none";
+            }
+
+            const kw2to5 = [inputFields[1], inputFields[2], inputFields[3], inputFields[4]];
+            if (subscriptionStatus !== "active") {
+                if (data.keywords[0]) {
+                    inputFields[0].value = data.keywords[0];
+                }
+                kw2to5.forEach(field => {
+                    field.disabled = true;
+                    field.placeholder = "🔒"; // lock emoji placeholder
+                    field.value = "";
+                });
+                inputFields[0].disabled = false;
+            } else {
+                inputFields.forEach(field => (field.disabled = false));
+            }
+
+            // --- Update jobType checkboxes based on fetched data ---
+            const jobTypeValues = data.jobType || []; // e.g. ["yes", "yes", "yes"]
+            const jobTypeLabels = ['Full-Time', 'Part-Time', 'Gig'];
+
+            jobTypeLabels.forEach((label, index) => {
+                const checkbox = document.querySelector(`input[name="jobType"][value="${label}"]`);
+                if (checkbox) {
+                    checkbox.checked = (jobTypeValues[index] || "").toLowerCase() === "yes";
+                }
+            });
+            // --- End jobType checkboxes updating ---
         }
+    } catch (err) {
+        console.error("Error fetching keywords:", err);
+        // Optionally, display error to user
+    }
+}
+
 
         submitButton.addEventListener("click", async () => {
             submitButton.disabled = true;
