@@ -660,8 +660,7 @@ h5 {
             const selectedJobTypes = {};
             jobTypeCheckboxes.forEach((checkbox) => {
                 if (checkbox.checked) {
-                    // Transform value like "Full-Time" to "jobTypeFullTime"
-                    const key = 'jobType' + checkbox.value.replace(/\s/g, '');
+                    const key = checkbox.value.replace(/\s/g, '');
                     selectedJobTypes[key] = "yes";
                 }
             });
