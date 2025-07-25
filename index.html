@@ -7,7 +7,6 @@
     <title>Telegram Web App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
-
 <style>
     :root {
         --primary-color: #09afb8;
@@ -52,7 +51,6 @@
         /* Remove margin/padding from original */
         margin-bottom: 1.5rem; /* Space below shape */
     }
-
     
         /* Mobile First - Base styles for 320px+ */
         @media (min-width: 320px) {
@@ -468,7 +466,6 @@ h5 {
 
     </style>
 
-</style>
 <body>
     <div class="shape"></div>
     <h2>OLJ only supports an "exact match" keyword. Using 1-word keywords yield better results.</h2>
@@ -481,15 +478,15 @@ h5 {
             <h5>Filter by Job Type</h5>
             <div class="filter-options">
                 <label>
-                    <input type="checkbox" name="jobType1" value="Full-Time" checked>
+                    <input type="checkbox" name="jobType" value="Full-Time" checked>
                     <span class="label-text">Full-Time</span>
                 </label>
                 <label>
-                    <input type="checkbox" name="jobType1" value="Part-Time">
+                    <input type="checkbox" name="jobType" value="Part-Time">
                     <span class="label-text">Part-Time</span>
                 </label>
                 <label>
-                    <input type="checkbox" name="jobType1" value="Gig">
+                    <input type="checkbox" name="jobType" value="Gig">
                     <span class="label-text">Gig</span>
                 </label>
             </div>
@@ -658,14 +655,34 @@ h5 {
                  return; // Stop execution
             }
 
-            // Updated fetch URL based on previous file content
+            // Gather selected job types
+            const jobTypeCheckboxes = document.querySelectorAll('input[name="jobType"]');
+            const selectedJobTypes = {};
+            jobTypeCheckboxes.forEach((checkbox) => {
+                if (checkbox.checked) {
+                    // Transform value like "Full-Time" to "jobTypeFullTime"
+                    const key = 'jobType' + checkbox.value.replace(/\s/g, '');
+                    selectedJobTypes[key] = "yes";
+                }
+            });
+
+            // Construct the final payload
+            const postData = {
+                chat_id,
+                keyword1: keywords[0],
+                keyword2: keywords[1],
+                keyword3: keywords[2],
+                keyword4: keywords[3],
+                keyword5: keywords[4],
+                ...selectedJobTypes // Spread the selected job types
+            };
             const webhookUrl = "https://n8n.kmonlinesolutions.com/webhook/update-keyword";
 
             try {
                 const response = await fetch(webhookUrl, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ chat_id, keyword1: keywords[0], keyword2: keywords[1], keyword3: keywords[2], keyword4: keywords[3], keyword5: keywords[4] }),
+                    body: JSON.stringify(postData),
                 });
 
                 if (response.ok) {
@@ -713,197 +730,6 @@ h5 {
             console.warn("User data not immediately available for loading keywords.");
             // Optionally, show a message or retry later
         }
-
-async function handleSubscriptionClick() {
-            const button = document.getElementById("subscribeButton");
-            
-            // Disable button during request
-            button.disabled = true;
-            button.textContent = "Processing...";
-            
-            try {
-                const tg = window.Telegram.WebApp;
-                const userData = tg?.initDataUnsafe?.user;
-                const chat_id = userData?.id;
-                
-                // Debug logging
-                console.log("Debug - userData:", userData);
-                console.log("Debug - chat_id:", chat_id);
-                
-                const webhookUrl = `https://n8n.kmonlinesolutions.com/webhook/subscribe?chat_id=${chat_id}`;
-                console.log("Debug - webhookUrl:", webhookUrl);
-
-                // Check if Telegram Web App is available
-                if (!tg) {
-                    console.error("Telegram Web App not available.");
-                    alert("Telegram Web App not available. Please open this in Telegram.");
-                    return;
-                }
-
-                // Check if userData is available
-                if (!userData) {
-                    console.error("User data not available.");
-                    if (tg.showPopup) {
-                        tg.showPopup({
-                            title: 'Error',
-                            message: 'Could not retrieve user information. Please ensure you are using the app within Telegram.',
-                            buttons: [{ type: 'ok' }]
-                        });
-                    } else {
-                        alert('Could not retrieve user information. Please ensure you are using the app within Telegram.');
-                    }
-                    return;
-                }
-
-                // Check if chat_id (userData.id) is available
-                if (!chat_id) {
-                    console.error("Chat ID not found.");
-                    if (tg.showPopup) {
-                        tg.showPopup({
-                            title: 'Error',
-                            message: 'Could not retrieve your user ID. Please restart the app or try again later.',
-                            buttons: [{ type: 'ok' }]
-                        });
-                    } else {
-                        alert('Could not retrieve your user ID. Please restart the app or try again later.');
-                    }
-                    return;
-                }
-
-                // Make the request
-                const response = await fetch(webhookUrl, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                });
-
-                console.log("Response status:", response.status);
-                console.log("Response headers:", response.headers);
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error("Subscription failed:", response.status, errorText);
-                    
-                    if (tg.showPopup) {
-                        tg.showPopup({
-                            title: 'Error',
-                            message: `Failed to send subscription request: ${response.status} - ${errorText || 'Unknown error'}`,
-                            buttons: [{ type: 'ok' }]
-                        });
-                    } else {
-                        alert(`Failed to send subscription request: ${response.status} - ${errorText || 'Unknown error'}`);
-                    }
-                    return;
-                }
-
-                const data = await response.json();
-                console.log("Subscription successful:", data);
-                
-                if (tg.showPopup) {
-                    tg.showPopup({
-                        title: 'Success',
-                        message: 'Subscription request sent successfully!',
-                        buttons: [{
-                            type: 'ok'
-                        }]
-                    }, function() {
-                                // This callback runs when the popup is closed
-                                tg.close();
-                    });
-                } else {
-                    alert('Subscription request sent successfully!');
-                    tg.close();
-                }
-
-            } catch (error) {
-                console.error("Subscription failed:", error);
-                
-                const tg = window.Telegram.WebApp;
-                if (tg && tg.showPopup) {
-                    tg.showPopup({
-                        title: 'Connection Error',
-                        message: `Failed to send subscription request: ${error.message}`,
-                        buttons: [{ type: 'ok' }]
-                    });
-                } else {
-                    alert(`Failed to send subscription request: ${error.message}`);
-                }
-            } finally {
-                // Re-enable button
-                button.disabled = false;
-                button.textContent = "Subscribe to unlock multiple keyword search";
-            }
-        }
-
-        // Wait for DOM to be fully loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            const subscribeButton = document.getElementById("subscribeButton");
-            if (subscribeButton) {
-                subscribeButton.addEventListener("click", handleSubscriptionClick);
-    // --- Job Type Filter Logic ---
-    const jobTypeCheckboxes = document.querySelectorAll('input[name="jobType"]');
-    const webhookUrl = "https://n8n.kmonlinesolutions.com/webhook/update-keyword";
-
-    function updateJobTypeFilter() {
-        const selectedJobTypes = {};
-        jobTypeCheckboxes.forEach((checkbox) => {
-            selectedJobTypes[checkbox.value] = checkbox.checked ? "yes" : null;
-        });
-
-        const chat_id = tg.initDataUnsafe?.user?.id;
-
-        if (chat_id) {
-            const postData = {
-                chat_id: chat_id,
-                ...selectedJobTypes
-            };
-
-            fetch(webhookUrl, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(postData),
-            })
-            .then(response => {
-                if (!response.ok) {
-                    console.error("Failed to send job type filter:", response.status, response.statusText);
-                    // Optionally show a popup to the user
-                    // tg.showPopup({ title: 'Error', message: 'Failed to update job type filter.', buttons: [{type: 'ok'}] });
-                } else {
-                    console.log("Job type filter updated successfully.");
-                    // Optionally show a success popup
-                    // tg.showPopup({ title: 'Success', message: 'Job type filter updated.', buttons: [{type: 'ok'}] });
-                }
-            })
-            .catch(error => {
-                console.error("Error sending job type filter:", error);
-                // Optionally show a popup to the user
-                // tg.showPopup({ title: 'Error', message: 'Network error while updating job type filter.', buttons: [{type: 'ok'}] });
-            });
-        } else {
-            console.error("Chat ID not available to send job type filter.");
-            // Optionally show a popup to the user
-            // tg.showPopup({ title: 'Error', message: 'User ID not available. Cannot update job type filter.', buttons: [{type: 'ok'}] });
-        }
-    }
-
-    // Add event listeners to all job type checkboxes
-    jobTypeCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', updateJobTypeFilter);
-    });
-
-    // Initial call to set the filter state when the page loads, if needed.
-    // This depends on whether the filter should be applied immediately or only on change.
-    // If the filter should be applied on page load, uncomment the line below:
-    // updateJobTypeFilter();
-    // --- End Job Type Filter Logic ---
-                console.log("Event listener attached to subscribe button");
-            } else {
-                console.error("Subscribe button not found!");
-            }
-        });
 
         // Initialize Telegram Web App
         if (window.Telegram && window.Telegram.WebApp) {
