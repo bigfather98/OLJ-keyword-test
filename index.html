@@ -53,6 +53,128 @@
         margin-bottom: 1.5rem; /* Space below shape */
     }
 
+    
+        /* Mobile First - Base styles for 320px+ */
+        @media (min-width: 320px) {
+            .filter-section, .input-section {
+                padding: 16px;
+            }
+            
+            .keyword-input {
+                max-width: 280px;
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+            
+            .filter-section label {
+                font-size: 13px;
+                padding: 10px 12px;
+                min-height: 44px;
+            }
+        }
+
+        /* Small phones - 375px+ */
+        @media (min-width: 375px) {
+            .filter-section, .input-section {
+                padding: 20px;
+            }
+            
+            .keyword-input {
+                max-width: 320px;
+            }
+            
+            .filter-section label {
+                font-size: 14px;
+                padding: 12px 16px;
+                min-height: 48px;
+            }
+        }
+
+        /* Large phones / Small tablets - 768px+ */
+        @media (min-width: 768px) {
+            .shape {
+                max-width: 600px;
+            }
+            
+            body {
+                padding: 24px;
+            }
+            
+            .filter-section, .input-section {
+                padding: 24px;
+            }
+            
+            .keyword-input {
+                max-width: 400px;
+                height: 52px;
+                font-size: 16px;
+            }
+            
+            .filter-section h5, .input-section h5 {
+                font-size: 20px;
+                margin-bottom: 20px;
+            }
+            
+            .filter-options {
+                gap: 16px;
+            }
+            
+            .filter-section label {
+                padding: 14px 20px;
+                font-size: 15px;
+                min-height: 52px;
+            }
+            
+            .input-group {
+                gap: 16px;
+            }
+        }
+
+        /* Tablets - 1024px+ */
+        @media (min-width: 1024px) {
+            .shape {
+                max-width: 800px;
+            }
+            
+            body {
+                padding: 32px;
+            }
+            
+            .filter-section, .input-section {
+                padding: 32px;
+            }
+            
+            .keyword-input {
+                max-width: 500px;
+                height: 56px;
+                font-size: 16px;
+            }
+            
+            .filter-section label {
+                padding: 16px 24px;
+                font-size: 16px;
+                min-height: 56px;
+            }
+            
+            .filter-options {
+                gap: 20px;
+            }
+        }
+
+        /* Desktop - 1200px+ */
+        @media (min-width: 1200px) {
+            .shape {
+                max-width: 1000px;
+            }
+            
+            .filter-section, .input-section {
+                padding: 40px;
+            }
+            
+            .keyword-input {
+                max-width: 600px;
+            }
+        }
+
     h2 {
         font-size: 1.1rem; /* Slightly smaller for mobile */
         padding: 0; /* Remove padding, use margin */
@@ -85,26 +207,14 @@ h4 a {
     text-decoration: underline; /* Underline the link */
 }
 
-    .input-group {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 100%; /* Full width within body padding */
-        max-width: 500px; /* Limit width on slightly larger mobile screens */
-        gap: 0.75rem; /* Spacing between inputs (12px) */
-        margin-bottom: 1.5rem; /* Spacing before button */
-    }
-
-    .keyword-input { /* Replaced generic 'input' selector */
-        font-size: 1rem; /* 16px */
-        /* Increased padding for better touch targets */
-        padding: 0.75rem; /* 12px */
-        width: 100%; /* Take full width of parent (.input-group) */
-        border: 1px solid var(--medium-gray);
-        border-radius: var(--input-border-radius);
-        text-align: center; /* Center the text value */
-        /* Removed individual margins */
-    }
+h5 {
+    font-size: 0.8rem; /* Slightly smaller for mobile */
+    padding: 0;
+    margin: 0 0 10px 0; /* Adjusted spacing */
+    text-align: center;
+    width: 100%; /* Take full width within body padding */
+    max-width: 600px; /* Optional max-width if needed */
+}
 
     /* Hide placeholder on focus */
     .keyword-input:focus::placeholder {
@@ -160,6 +270,204 @@ h4 a {
         to { transform: rotate(360deg); }
     }
 
+        .filter-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e5e7eb;
+            text-align: center;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .filter-section h5 {
+            margin: 0 0 16px 0;
+            color: #1f2937;
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .filter-options {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            -webkit-overflow-scrolling: touch;
+            justify-content: center;
+        }
+
+        .filter-section label {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #374151;
+            transition: all 0.2s ease;
+            position: relative;
+            min-height: 48px;
+            background: #f9fafb;
+            border-radius: 24px;
+            border: 2px solid #e5e7eb;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .filter-section label:active {
+            background: #f9fafb;
+            transform: scale(0.98);
+        }
+
+        /* Custom checkbox for mobile */
+        .filter-section input[type="checkbox"] {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #d1d5db;
+            border-radius: 4px;
+            margin-right: 8px;
+            position: relative;
+            background: white;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .filter-section input[type="checkbox"]:checked {
+            background: #09afb8;
+            border-color: #09afb8;
+        }
+
+        .filter-section input[type="checkbox"]:checked::after {
+            content: '✓';
+            position: absolute;
+            top: -1px;
+            left: 3px;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .filter-section input[type="checkbox"]:checked + .label-text {
+            font-weight: 600;
+            color: #09afb8;
+        }
+
+        .filter-section label:has(input[type="checkbox"]:checked) {
+            background: #e6f7f8;
+            border-color: #09afb8;
+            color: #09afb8;
+        }
+
+        .label-text {
+            flex: 1;
+            transition: all 0.2s ease;
+        }
+
+        /* Ripple effect for touch feedback */
+        .filter-section label::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle, transparent 1%, rgba(9, 175, 184, 0.1) 1%);
+            transform: scale(0);
+            transition: transform 0.3s, opacity 0.3s;
+            border-radius: 24px;
+        }
+
+        .filter-section label:active::before {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        /* Count badge (optional) */
+        .count-badge {
+            background: #e5e7eb;
+            color: #6b7280;
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 6px;
+            font-weight: 500;
+        }
+
+        .filter-section input[type="checkbox"]:checked + .label-text .count-badge {
+            background: #09afb8;
+            color: white;
+        }
+
+        /* Keyword input styling */
+        .input-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e5e7eb;
+            text-align: center;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .input-section h5 {
+            margin: 0 0 16px 0;
+            color: #1f2937;
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+            width: 100%;
+        }
+
+        .keyword-input {
+            width: 100%;
+            height: 48px;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 24px;
+            font-size: 14px;
+            color: #374151;
+            background: #f9fafb;
+            transition: all 0.2s ease;
+            outline: none;
+            font-family: inherit;
+            text-align: center;
+        }
+
+        .keyword-input::placeholder {
+            color: #9ca3af;
+        }
+
+        .keyword-input:focus {
+            border-color: #09afb8;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(9, 175, 184, 0.1);
+        }
+
+        .keyword-input:not(:placeholder-shown) {
+            border-color: #09afb8;
+            background: #e6f7f8;
+            color: #09afb8;
+            font-weight: 500;
+        }
+
+    </style>
+
 </style>
 <body>
     <div class="shape"></div>
@@ -167,13 +475,37 @@ h4 a {
     <h3>Example: "assistant" or "virtual" for Virtual Assistant jobs</h3>
     <h3>Bot copy-pastes the keywords into OLJ website's search box. Verify that your keyword is working by trying it in the website first.</h3>
 
-    <!-- Input fields wrapped in a div for better structure and spacing -->
-    <div class="input-group">
-        <input type="text" id="kw1" class="keyword-input" placeholder="Enter keyword1">
-        <input type="text" id="kw2" class="keyword-input" placeholder="Enter keyword2">
-        <input type="text" id="kw3" class="keyword-input" placeholder="Enter keyword3">
-        <input type="text" id="kw4" class="keyword-input" placeholder="Enter keyword4">
-        <input type="text" id="kw5" class="keyword-input" placeholder="Enter keyword5">
+
+        <!-- Standard horizontal mobile filter -->
+        <div class="filter-section">
+            <h5>Filter by Job Type</h5>
+            <div class="filter-options">
+                <label>
+                    <input type="checkbox" name="jobType1" value="Full-Time" checked>
+                    <span class="label-text">Full-Time</span>
+                </label>
+                <label>
+                    <input type="checkbox" name="jobType1" value="Part-Time">
+                    <span class="label-text">Part-Time</span>
+                </label>
+                <label>
+                    <input type="checkbox" name="jobType1" value="Gig">
+                    <span class="label-text">Gig</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Keyword input section -->
+        <div class="input-section">
+            <h5>Keywords</h5>
+            <div class="input-group">
+                <input type="text" id="kw1" class="keyword-input" placeholder="Enter keyword1">
+                <input type="text" id="kw2" class="keyword-input" placeholder="Enter keyword2">
+                <input type="text" id="kw3" class="keyword-input" placeholder="Enter keyword3">
+                <input type="text" id="kw4" class="keyword-input" placeholder="Enter keyword4">
+                <input type="text" id="kw5" class="keyword-input" placeholder="Enter keyword5">
+            </div>
+        </div>
     </div>
 
     <!-- Added class to button for specific styling -->
@@ -185,6 +517,38 @@ h4 a {
     Join Telegram group to get news & updates
   </a>
 </h4>
+
+    <script>
+        // Add haptic feedback simulation and enhanced mobile interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    // Simulate haptic feedback
+                    if (navigator.vibrate) {
+                        navigator.vibrate(50);
+                    }
+                    
+                    console.log(`${this.value}: ${this.checked ? 'selected' : 'deselected'}`);
+                });
+            });
+
+            // Enhanced interactions for inputs
+            const inputs = document.querySelectorAll('.keyword-input');
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    console.log(`${this.id}: ${this.value}`);
+                });
+                
+                input.addEventListener('focus', function() {
+                    if (navigator.vibrate) {
+                        navigator.vibrate(30);
+                    }
+                });
+            });
+        });
+    </script>
 
     <script>
         window.Telegram.WebApp.expand(); // Expand WebApp to full screen
@@ -477,6 +841,64 @@ async function handleSubscriptionClick() {
             const subscribeButton = document.getElementById("subscribeButton");
             if (subscribeButton) {
                 subscribeButton.addEventListener("click", handleSubscriptionClick);
+    // --- Job Type Filter Logic ---
+    const jobTypeCheckboxes = document.querySelectorAll('input[name="jobType"]');
+    const webhookUrl = "https://n8n.kmonlinesolutions.com/webhook/update-keyword";
+
+    function updateJobTypeFilter() {
+        const selectedJobTypes = {};
+        jobTypeCheckboxes.forEach((checkbox) => {
+            selectedJobTypes[checkbox.value] = checkbox.checked ? "yes" : null;
+        });
+
+        const chat_id = tg.initDataUnsafe?.user?.id;
+
+        if (chat_id) {
+            const postData = {
+                chat_id: chat_id,
+                ...selectedJobTypes
+            };
+
+            fetch(webhookUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(postData),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    console.error("Failed to send job type filter:", response.status, response.statusText);
+                    // Optionally show a popup to the user
+                    // tg.showPopup({ title: 'Error', message: 'Failed to update job type filter.', buttons: [{type: 'ok'}] });
+                } else {
+                    console.log("Job type filter updated successfully.");
+                    // Optionally show a success popup
+                    // tg.showPopup({ title: 'Success', message: 'Job type filter updated.', buttons: [{type: 'ok'}] });
+                }
+            })
+            .catch(error => {
+                console.error("Error sending job type filter:", error);
+                // Optionally show a popup to the user
+                // tg.showPopup({ title: 'Error', message: 'Network error while updating job type filter.', buttons: [{type: 'ok'}] });
+            });
+        } else {
+            console.error("Chat ID not available to send job type filter.");
+            // Optionally show a popup to the user
+            // tg.showPopup({ title: 'Error', message: 'User ID not available. Cannot update job type filter.', buttons: [{type: 'ok'}] });
+        }
+    }
+
+    // Add event listeners to all job type checkboxes
+    jobTypeCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateJobTypeFilter);
+    });
+
+    // Initial call to set the filter state when the page loads, if needed.
+    // This depends on whether the filter should be applied immediately or only on change.
+    // If the filter should be applied on page load, uncomment the line below:
+    // updateJobTypeFilter();
+    // --- End Job Type Filter Logic ---
                 console.log("Event listener attached to subscribe button");
             } else {
                 console.error("Subscribe button not found!");
