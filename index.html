@@ -599,7 +599,7 @@ async function loadKeywords(chat_id) {
             // Handle subscription status & enabling/disabling fields
             const subscriptionStatus = data.subscription_status;
             const subscribeButton = document.getElementById("subscribeButton");
-            if (subscribeButton && subscriptionStatus === "active") {
+            if (subscribeButton && subscriptionStatus === "paid") {
                 subscribeButton.style.display = "none";
             }
 
