@@ -604,7 +604,7 @@ async function loadKeywords(chat_id) {
             }
 
             const lockedFields = inputFields.slice(3);
-            if (subscriptionStatus !== "active") {
+            if (subscriptionStatus !== "paid") {
                 if (data.keywords[0]) {
                     inputFields[0].value = data.keywords[0];
                 }
