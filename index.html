@@ -41,6 +41,7 @@
         margin: 0; /* Shorthand */
         /* Add padding for spacing on mobile */
         padding: var(--spacing-unit);
+        padding-bottom: 6rem; /* Space for sticky submit button */
     }
 
     .shape {
@@ -240,6 +241,10 @@ h5 {
         text-align: center;
         margin-top: 0; /* Removed margin-top */
         line-height: 1.3; /* Ensure text vertical alignment with spinner */
+        position: sticky;
+        bottom: 1rem;
+        z-index: 1000;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
     }
 
     .spinner {
@@ -501,6 +506,11 @@ h5 {
                 <input type="text" id="kw3" class="keyword-input" placeholder="Enter keyword3">
                 <input type="text" id="kw4" class="keyword-input" placeholder="Enter keyword4">
                 <input type="text" id="kw5" class="keyword-input" placeholder="Enter keyword5">
+                <input type="text" id="kw6" class="keyword-input" placeholder="Enter keyword6">
+                <input type="text" id="kw7" class="keyword-input" placeholder="Enter keyword7">
+                <input type="text" id="kw8" class="keyword-input" placeholder="Enter keyword8">
+                <input type="text" id="kw9" class="keyword-input" placeholder="Enter keyword9">
+                <input type="text" id="kw10" class="keyword-input" placeholder="Enter keyword10">
             </div>
         </div>
     </div>
@@ -560,7 +570,12 @@ h5 {
             document.getElementById("kw2"),
             document.getElementById("kw3"),
             document.getElementById("kw4"),
-            document.getElementById("kw5")
+            document.getElementById("kw5"),
+            document.getElementById("kw6"),
+            document.getElementById("kw7"),
+            document.getElementById("kw8"),
+            document.getElementById("kw9"),
+            document.getElementById("kw10")
         ];
 
 async function loadKeywords(chat_id) {
@@ -572,7 +587,7 @@ async function loadKeywords(chat_id) {
         // Check keywords exist and are array
         if (data.keywords && Array.isArray(data.keywords)) {
             // Populate keyword input fields (assume inputFields is an array of the 5 keyword input elements)
-            for (let i = 0; i < 5; i++) {
+            for (let i = 0; i < inputFields.length; i++) {
                 if (data.keywords[i]) {
                     inputFields[i].value = data.keywords[i];
                 } else {
@@ -588,17 +603,17 @@ async function loadKeywords(chat_id) {
                 subscribeButton.style.display = "none";
             }
 
-            const kw2to5 = [inputFields[1], inputFields[2], inputFields[3], inputFields[4]];
+            const lockedFields = inputFields.slice(3);
             if (subscriptionStatus !== "active") {
                 if (data.keywords[0]) {
                     inputFields[0].value = data.keywords[0];
                 }
-                kw2to5.forEach(field => {
+                lockedFields.forEach(field => {
                     field.disabled = true;
                     field.placeholder = "🔒"; // lock emoji placeholder
                     field.value = "";
                 });
-                inputFields[0].disabled = false;
+                inputFields.slice(0, 3).forEach(field => (field.disabled = false));
             } else {
                 inputFields.forEach(field => (field.disabled = false));
             }
@@ -682,6 +697,11 @@ async function loadKeywords(chat_id) {
                 keyword3: keywords[2],
                 keyword4: keywords[3],
                 keyword5: keywords[4],
+                keyword6: keywords[5],
+                keyword7: keywords[6],
+                keyword8: keywords[7],
+                keyword9: keywords[8],
+                keyword10: keywords[9],
                 ...selectedJobTypes // Spread the selected job types
             };
             const webhookUrl = "https://n8n.kmonlinesolutions.com/webhook/update-keyword";
