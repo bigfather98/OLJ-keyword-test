@@ -517,7 +517,7 @@ h5 {
 
     <!-- Added class to button for specific styling -->
     <button id="submit" class="submit-button">Submit</button>
-    <button id="subscribeButton" class="subscribe-btn">🔑Subscribe to unlock multiple keyword search</button>
+    
     <h3></br><a href="https://t.me/KMupworkbot" target="_blank"> Upwork bot is released @KMupworkbot</h3>
  <h4>&#128073 
   <a href="https://t.me/upworkbotgroup" target="_blank">
@@ -596,27 +596,8 @@ async function loadKeywords(chat_id) {
                 }
             }
 
-            // Handle subscription status & enabling/disabling fields
-            const subscriptionStatus = data.subscription_status;
-            const subscribeButton = document.getElementById("subscribeButton");
-            if (subscribeButton && subscriptionStatus === "paid") {
-                subscribeButton.style.display = "none";
-            }
-
-            const lockedFields = inputFields.slice(3);
-            if (subscriptionStatus !== "paid") {
-                if (data.keywords[0]) {
-                    inputFields[0].value = data.keywords[0];
-                }
-                lockedFields.forEach(field => {
-                    field.disabled = true;
-                    field.placeholder = "🔒"; // lock emoji placeholder
-                    field.value = "";
-                });
-                inputFields.slice(0, 3).forEach(field => (field.disabled = false));
-            } else {
-                inputFields.forEach(field => (field.disabled = false));
-            }
+            // Everyone can edit all 10 keyword fields.
+            inputFields.forEach(field => (field.disabled = false));
 
             // --- Update jobType checkboxes based on fetched data ---
             const jobTypeValues = data.jobType || []; // e.g. ["yes", "yes", "yes"]
