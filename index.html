@@ -307,7 +307,7 @@ h5 {
         .filter-section label {
             display: flex;
             align-items: center;
-            padding: 12px 16px;
+            padding: 6px 16px;
             cursor: pointer;
             font-size: 14px;
             color: #374151;
@@ -469,6 +469,153 @@ h5 {
             font-weight: 500;
         }
 
+        .currency-input-wrapper {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            max-width: 280px;
+            height: 48px;
+            border: 2px solid #e5e7eb;
+            border-radius: 24px;
+            background: #f9fafb;
+            padding: 0 14px;
+            transition: all 0.2s ease;
+        }
+
+        .currency-input-wrapper:focus-within {
+            border-color: #09afb8;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(9, 175, 184, 0.1);
+        }
+
+        .currency-symbol {
+            color: #6b7280;
+            font-weight: 600;
+            margin-right: 6px;
+        }
+
+        .currency-input {
+            border: none;
+            background: transparent;
+            width: 100%;
+            outline: none;
+            font-size: 14px;
+            color: #374151;
+            text-align: left;
+            font-family: inherit;
+        }
+
+        /* --- Collapsible Filter Shell --- */
+        .filter-container {
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .filter-header {
+            background-color: #09afb8;
+            color: white;
+            padding: 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.2s;
+        }
+
+        .filter-header:hover {
+            background-color: #078a92;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .filter-title1 {
+            font-weight: 600;
+            font-size: 1rem;
+            color: white;
+        }
+
+        .filter-count {
+            background: white;
+            color: #09afb8;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            margin-left: 4px;
+        }
+
+        .chevron {
+            width: 20px;
+            height: 20px;
+            transition: transform 0.3s;
+        }
+
+        .chevron.open {
+            transform: rotate(180deg);
+        }
+
+        .filter-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out, opacity 0.3s;
+            opacity: 0;
+        }
+
+        .filter-panel.open {
+            max-height: 80vh;
+            opacity: 1;
+            overflow-y: auto;
+        }
+
+        .filter-content {
+            padding: 16px;
+        }
+
+        .filter-section-inner {
+            margin-bottom: 20px;
+        }
+
+        .filter-section-inner:last-child {
+            margin-bottom: 0;
+        }
+
+        .filter-section-inner .filter-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0 0 10px 0;
+            text-align: center;
+        }
+
+        .filter-section-inner .filter-options {
+            flex-wrap: wrap;
+            overflow-x: visible;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .filter-panel::-webkit-scrollbar { width: 6px; }
+        .filter-panel::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 3px; }
+        .filter-panel::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        .filter-panel::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
     </style>
 
 <body>
@@ -478,22 +625,63 @@ h5 {
     <h3>Bot copy-pastes the keywords into OLJ website's search box. Verify that your keyword is working by trying it in the website first.</h3>
 
 
-        <!-- Standard horizontal mobile filter -->
-        <div class="filter-section">
-            <h5>Filter by Job Type</h5>
-            <div class="filter-options">
-                <label>
-                    <input type="checkbox" name="jobType" value="Full-Time" checked>
-                    <span class="label-text">Full-Time</span>
-                </label>
-                <label>
-                    <input type="checkbox" name="jobType" value="Part-Time">
-                    <span class="label-text">Part-Time</span>
-                </label>
-                <label>
-                    <input type="checkbox" name="jobType" value="Gig">
-                    <span class="label-text">Gig</span>
-                </label>
+        <div class="filter-container">
+            <div class="filter-header" onclick="toggleFilter()">
+                <div class="header-content">
+                    <svg class="filter-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"/>
+                    </svg>
+                    <span class="filter-title1">Filters</span>
+                    <span id="filterCount" class="filter-count hidden">0</span>
+                </div>
+                <svg id="chevron" class="chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </div>
+
+            <div id="filterPanel" class="filter-panel">
+                <div class="filter-content">
+                    <div class="filter-section filter-section-inner">
+                        <h5 class="filter-title">Job Type</h5>
+                        <div class="filter-options">
+                            <label>
+                                <input type="checkbox" name="jobType" value="Full-Time" checked>
+                                <span class="label-text">Full-Time</span>
+                            </label>
+                            <label>
+                                <input type="checkbox" name="jobType" value="Part-Time">
+                                <span class="label-text">Part-Time</span>
+                            </label>
+                            <label>
+                                <input type="checkbox" name="jobType" value="Gig">
+                                <span class="label-text">Gig</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="filter-section filter-section-inner">
+                        <h5 class="filter-title">Minimum Hourly Rate</h5>
+                        <div class="currency-input-wrapper">
+                            <span class="currency-symbol">$</span>
+                            <input type="text" id="minratehourly" class="currency-input" inputmode="numeric" maxlength="2" placeholder="00">
+                        </div>
+                    </div>
+
+                    <div class="filter-section filter-section-inner">
+                        <h5 class="filter-title">Receive jobs with TBD or negotiable salary</h5>
+                        <div class="filter-options">
+                            <label>
+                                <input type="checkbox" name="allow_tbd_option" id="allow_tbd_yes" value="yes" checked>
+                                <span class="label-text">Yes</span>
+                            </label>
+                            <label>
+                                <input type="checkbox" name="allow_tbd_option" id="allow_tbd_no" value="no">
+                                <span class="label-text">No</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -513,7 +701,6 @@ h5 {
                 <input type="text" id="kw10" class="keyword-input" placeholder="Enter keyword10">
             </div>
         </div>
-    </div>
 
     <!-- Added class to button for specific styling -->
     <button id="submit" class="submit-button">Submit</button>
@@ -558,6 +745,30 @@ h5 {
     </script>
 
     <script>
+        let filterIsOpen = false;
+
+        function toggleFilter() {
+            filterIsOpen = !filterIsOpen;
+            document.getElementById('filterPanel').classList.toggle('open', filterIsOpen);
+            document.getElementById('chevron').classList.toggle('open', filterIsOpen);
+        }
+
+        function updateFilterCount() {
+            let count = 0;
+            const jobTypeBoxes = document.querySelectorAll('input[name="jobType"]');
+            const allChecked = [...jobTypeBoxes].every((cb) => cb.checked);
+            if (!allChecked) count++;
+
+            const minRate = document.getElementById('minratehourly').value.trim();
+            if (minRate) count++;
+
+            if (document.getElementById('allow_tbd_no').checked) count++;
+
+            const badge = document.getElementById('filterCount');
+            badge.textContent = count;
+            badge.classList.toggle('hidden', count === 0);
+        }
+
         window.Telegram.WebApp.expand(); // Expand WebApp to full screen
 
         const tg = window.Telegram.WebApp;
@@ -577,6 +788,33 @@ h5 {
             document.getElementById("kw9"),
             document.getElementById("kw10")
         ];
+        const minRateHourlyInput = document.getElementById("minratehourly");
+        const allowTbdYesCheckbox = document.getElementById("allow_tbd_yes");
+        const allowTbdNoCheckbox = document.getElementById("allow_tbd_no");
+        const allowTbdCheckboxes = document.querySelectorAll('input[name="allow_tbd_option"]');
+
+        if (minRateHourlyInput) {
+            minRateHourlyInput.addEventListener("input", function() {
+                this.value = this.value.replace(/\D/g, "").slice(0, 2);
+                updateFilterCount();
+            });
+        }
+
+        document.querySelectorAll('input[name="jobType"]').forEach((cb) => {
+            cb.addEventListener('change', updateFilterCount);
+        });
+        allowTbdCheckboxes.forEach((cb) => {
+            cb.addEventListener('change', function() {
+                if (this.checked) {
+                    allowTbdCheckboxes.forEach((other) => {
+                        if (other !== this) other.checked = false;
+                    });
+                } else if (![...allowTbdCheckboxes].some((item) => item.checked)) {
+                    this.checked = true;
+                }
+                updateFilterCount();
+            });
+        });
 
 async function loadKeywords(chat_id) {
     try {
@@ -610,6 +848,18 @@ async function loadKeywords(chat_id) {
                 }
             });
             // --- End jobType checkboxes updating ---
+
+            if (minRateHourlyInput) {
+                minRateHourlyInput.value = data.minratehourly ?? "";
+            }
+
+            if (allowTbdYesCheckbox && allowTbdNoCheckbox) {
+                const allowTbdValue = (data.allow_tbd ?? "yes").toString().toLowerCase();
+                allowTbdYesCheckbox.checked = allowTbdValue !== "no";
+                allowTbdNoCheckbox.checked = allowTbdValue === "no";
+            }
+
+            updateFilterCount();
         }
     } catch (err) {
         console.error("Error fetching keywords:", err);
@@ -669,6 +919,9 @@ async function loadKeywords(chat_id) {
                 }
             });
 
+            const minratehourly = minRateHourlyInput?.value.trim() ? Number(minRateHourlyInput.value.trim()) : null;
+            const allow_tbd = allowTbdNoCheckbox?.checked ? "no" : "yes";
+
 
             // Construct the final payload
             const postData = {
@@ -683,6 +936,8 @@ async function loadKeywords(chat_id) {
                 keyword8: keywords[7],
                 keyword9: keywords[8],
                 keyword10: keywords[9],
+                minratehourly,
+                allow_tbd,
                 ...selectedJobTypes // Spread the selected job types
             };
             const webhookUrl = "https://n8n.kmonlinesolutions.com/webhook/update-keyword";
@@ -732,6 +987,7 @@ async function loadKeywords(chat_id) {
         });
 
         // Load keywords after setting up the event listener
+        updateFilterCount();
         if (userData?.id) {
             loadKeywords(userData.id);
         } else {
