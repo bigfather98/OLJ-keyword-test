@@ -469,6 +469,42 @@ h5 {
             font-weight: 500;
         }
 
+        .currency-input-wrapper {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            max-width: 280px;
+            height: 48px;
+            border: 2px solid #e5e7eb;
+            border-radius: 24px;
+            background: #f9fafb;
+            padding: 0 14px;
+            transition: all 0.2s ease;
+        }
+
+        .currency-input-wrapper:focus-within {
+            border-color: #09afb8;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(9, 175, 184, 0.1);
+        }
+
+        .currency-symbol {
+            color: #6b7280;
+            font-weight: 600;
+            margin-right: 6px;
+        }
+
+        .currency-input {
+            border: none;
+            background: transparent;
+            width: 100%;
+            outline: none;
+            font-size: 14px;
+            color: #374151;
+            text-align: left;
+            font-family: inherit;
+        }
+
     </style>
 
 <body>
@@ -511,6 +547,22 @@ h5 {
                 <input type="text" id="kw8" class="keyword-input" placeholder="Enter keyword8">
                 <input type="text" id="kw9" class="keyword-input" placeholder="Enter keyword9">
                 <input type="text" id="kw10" class="keyword-input" placeholder="Enter keyword10">
+            </div>
+        </div>
+        <div class="input-section">
+            <h5>Minimum Hourly Rate</h5>
+            <div class="currency-input-wrapper">
+                <span class="currency-symbol">$</span>
+                <input type="text" id="minratehourly" class="currency-input" inputmode="numeric" maxlength="2" placeholder="00">
+            </div>
+        </div>
+        <div class="input-section">
+            <h5>Allow TBD</h5>
+            <div class="filter-options">
+                <label>
+                    <input type="checkbox" id="allow_tbd" checked>
+                    <span class="label-text">Allow TBD</span>
+                </label>
             </div>
         </div>
     </div>
@@ -577,6 +629,14 @@ h5 {
             document.getElementById("kw9"),
             document.getElementById("kw10")
         ];
+        const minRateHourlyInput = document.getElementById("minratehourly");
+        const allowTbdCheckbox = document.getElementById("allow_tbd");
+
+        if (minRateHourlyInput) {
+            minRateHourlyInput.addEventListener("input", function() {
+                this.value = this.value.replace(/\D/g, "").slice(0, 2);
+            });
+        }
 
 async function loadKeywords(chat_id) {
     try {
@@ -610,6 +670,15 @@ async function loadKeywords(chat_id) {
                 }
             });
             // --- End jobType checkboxes updating ---
+
+            if (minRateHourlyInput) {
+                minRateHourlyInput.value = data.minratehourly ?? "";
+            }
+
+            if (allowTbdCheckbox) {
+                const allowTbdValue = (data.allow_tbd ?? "yes").toString().toLowerCase();
+                allowTbdCheckbox.checked = allowTbdValue === "yes";
+            }
         }
     } catch (err) {
         console.error("Error fetching keywords:", err);
@@ -669,6 +738,9 @@ async function loadKeywords(chat_id) {
                 }
             });
 
+            const minratehourly = minRateHourlyInput?.value.trim() ? Number(minRateHourlyInput.value.trim()) : null;
+            const allow_tbd = allowTbdCheckbox?.checked ? "yes" : "no";
+
 
             // Construct the final payload
             const postData = {
@@ -683,6 +755,8 @@ async function loadKeywords(chat_id) {
                 keyword8: keywords[7],
                 keyword9: keywords[8],
                 keyword10: keywords[9],
+                minratehourly,
+                allow_tbd,
                 ...selectedJobTypes // Spread the selected job types
             };
             const webhookUrl = "https://n8n.kmonlinesolutions.com/webhook/update-keyword";
