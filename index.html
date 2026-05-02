@@ -602,6 +602,11 @@ h5 {
             text-align: center;
         }
 
+        .filter-section-inner .filter-options {
+            flex-wrap: wrap;
+            overflow-x: visible;
+        }
+
         .hidden {
             display: none;
         }
@@ -664,11 +669,15 @@ h5 {
                     </div>
 
                     <div class="filter-section filter-section-inner">
-                        <h5 class="filter-title">Allow TBD</h5>
+                        <h5 class="filter-title">Receive Jobs with TBD or negotiable salary</h5>
                         <div class="filter-options">
                             <label>
-                                <input type="checkbox" id="allow_tbd" checked>
-                                <span class="label-text">Allow TBD</span>
+                                <input type="checkbox" name="allow_tbd_option" id="allow_tbd_yes" value="yes" checked>
+                                <span class="label-text">Yes</span>
+                            </label>
+                            <label>
+                                <input type="checkbox" name="allow_tbd_option" id="allow_tbd_no" value="no">
+                                <span class="label-text">No</span>
                             </label>
                         </div>
                     </div>
@@ -753,7 +762,7 @@ h5 {
             const minRate = document.getElementById('minratehourly').value.trim();
             if (minRate) count++;
 
-            if (!document.getElementById('allow_tbd').checked) count++;
+            if (document.getElementById('allow_tbd_no').checked) count++;
 
             const badge = document.getElementById('filterCount');
             badge.textContent = count;
@@ -780,7 +789,9 @@ h5 {
             document.getElementById("kw10")
         ];
         const minRateHourlyInput = document.getElementById("minratehourly");
-        const allowTbdCheckbox = document.getElementById("allow_tbd");
+        const allowTbdYesCheckbox = document.getElementById("allow_tbd_yes");
+        const allowTbdNoCheckbox = document.getElementById("allow_tbd_no");
+        const allowTbdCheckboxes = document.querySelectorAll('input[name="allow_tbd_option"]');
 
         if (minRateHourlyInput) {
             minRateHourlyInput.addEventListener("input", function() {
@@ -792,7 +803,18 @@ h5 {
         document.querySelectorAll('input[name="jobType"]').forEach((cb) => {
             cb.addEventListener('change', updateFilterCount);
         });
-        allowTbdCheckbox?.addEventListener('change', updateFilterCount);
+        allowTbdCheckboxes.forEach((cb) => {
+            cb.addEventListener('change', function() {
+                if (this.checked) {
+                    allowTbdCheckboxes.forEach((other) => {
+                        if (other !== this) other.checked = false;
+                    });
+                } else if (![...allowTbdCheckboxes].some((item) => item.checked)) {
+                    this.checked = true;
+                }
+                updateFilterCount();
+            });
+        });
 
 async function loadKeywords(chat_id) {
     try {
@@ -831,9 +853,10 @@ async function loadKeywords(chat_id) {
                 minRateHourlyInput.value = data.minratehourly ?? "";
             }
 
-            if (allowTbdCheckbox) {
+            if (allowTbdYesCheckbox && allowTbdNoCheckbox) {
                 const allowTbdValue = (data.allow_tbd ?? "yes").toString().toLowerCase();
-                allowTbdCheckbox.checked = allowTbdValue === "yes";
+                allowTbdYesCheckbox.checked = allowTbdValue !== "no";
+                allowTbdNoCheckbox.checked = allowTbdValue === "no";
             }
 
             updateFilterCount();
@@ -897,7 +920,7 @@ async function loadKeywords(chat_id) {
             });
 
             const minratehourly = minRateHourlyInput?.value.trim() ? Number(minRateHourlyInput.value.trim()) : null;
-            const allow_tbd = allowTbdCheckbox?.checked ? "yes" : "no";
+            const allow_tbd = allowTbdNoCheckbox?.checked ? "no" : "yes";
 
 
             // Construct the final payload
